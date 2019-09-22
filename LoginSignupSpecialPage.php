@@ -872,6 +872,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'validation-callback' => function ( $value, $alldata ) {
 						//global $wgConfirmEmailAsReason;
 						if ( $value && Sanitizer::validateEmail( $value ) ) {
+							//call_user_func(
 						//	if(!isset($wgConfirmEmailAsReason)) $wgConfirmEmailAsReason = false;
 						//	else $wgConfirmEmailAsReason = true;
 							//if(!$wgConfirmEmailAsReason)
@@ -882,10 +883,14 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'placeholder-message' => 'createacct-reason-ph',
 				],
 				'confirmreason' => [	///FIX: doesn't show
+					'baseField' => 'reason',
 					'type' => 'check',
-					'label-message' => "createacct-reason",
+					'label-message' => "createacct-reason-confirm",
 					'name' => 'wpCreateaccountConfirmReason',
 					'id' => 'wpCreateaccountConfirmReason',
+					//'hide-if' => [ '===', 'wpCreateaccountMail', '1' ],
+					//'help-message' => $isLoggedIn ? 'createacct-reason-confirm-tip'
+						//: '',
 				],
 				'createaccount' => [
 					// submit button
