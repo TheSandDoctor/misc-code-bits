@@ -45,7 +45,7 @@
 		//$cconfirmationLabel.text("");
 		//$pwds = $confirmationCheckbox.parent();
 		//$pwds.hide();
-		$( '#wpCreateaccountConfirmReason' ).parent().hide();
+		 $('.mw-field-confirmreason').addClass('mw-field-hidden');
 
 		function updateForCheckbox() {
 			//var checked = $createByMailCheckbox.prop( 'checked' );
@@ -55,13 +55,18 @@
 				//$confirmationCheckbox.show();
 			//	if( $pwds )
 			//	{
-				$( '#wpCreateaccountConfirmReason' ).parent().show();
+				//$( '#wpCreateaccountConfirmReason' ).parent().show();
+				 $('.mw-field-confirmreason').removeClass('mw-field-hidden');
 					//$pwds.show();
 					//$beforePwds.after( $pwds );
 					//$pwds = null;
-					$emailLabel.text( requiredText );
+					//$emailLabel.text( requiredText );
 			//	}
 			//	$cconfirmationLabel.text( requiredText );
+			}
+			else
+			{
+				 $('.mw-field-confirmreason').addClass('mw-field-hidden');
 			}
 			
 			/*var checked = $createByMailCheckbox.prop( 'checked' );
