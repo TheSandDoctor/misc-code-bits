@@ -29,62 +29,33 @@
 		$createByMailCheckbox.on( 'change', updateForCheckbox );
 		updateForCheckbox();
 	} );
-	
+	// When typing in a reason for account creation, show confirmation box if the input is an email address
 	$( function () {
 		// Always required if checked, otherwise it depends, so we use the original
-		var $emailLabel = $( 'label[for="wpReason"]' ),
-			originalText = $emailLabel.text(),
-			requiredText = mw.message( 'createacct-emailrequired' ).text(),
-			$createReasonInput = $( '#wpReason' ),
-			$confirmationCheckbox = $( '#wpCreateaccountConfirmReason' ),
-			$cconfirmationLabel = $( 'label[for="wpCreateaccountConfirmReason"]' ),
-			confirmationText = $cconfirmationLabel.text(),
-			$beforePwds = $( '.mw-row-password' ).first().prev(),
-			re = /\S+@\S+\.\S+/,	// regex for email address verification
-			$pwds;
-		//$cconfirmationLabel.text("");
-		//$pwds = $confirmationCheckbox.parent();
-		//$pwds.hide();
-		 $('.mw-field-confirmreason').addClass('mw-field-hidden');
+		var re = /\S+@\S+\.\S+/,	// Regex for email address verification
+		$createByMailCheckbox = $( '#wpCreateaccountConfirmReason' );
 
 		function updateForCheckbox() {
-			//var checked = $createByMailCheckbox.prop( 'checked' );
-			var testResult = re.test( $( "#wpReason" ).val() );
-			if ( testResult )
-			{
-				//$confirmationCheckbox.show();
-			//	if( $pwds )
-			//	{
-				//$( '#wpCreateaccountConfirmReason' ).parent().show();
-				 $('.mw-field-confirmreason').removeClass('mw-field-hidden');
-					//$pwds.show();
-					//$beforePwds.after( $pwds );
-					//$pwds = null;
-					//$emailLabel.text( requiredText );
-			//	}
-			//	$cconfirmationLabel.text( requiredText );
-			}
-			else
-			{
-				 $('.mw-field-confirmreason').addClass('mw-field-hidden');
-			}
-			
-			/*var checked = $createByMailCheckbox.prop( 'checked' );
-			
-			if ( checked ) {
-				$pwds = $( '.mw-row-password' ).detach();
-				$emailLabel.text( requiredText );*/
-			/*} else {
-				if ( $pwds ) {
-					$beforePwds.after( $pwds );
-					$pwds = null;
+			var testResult = re.test( $( "#wpReason" ).val() ),
+			checked = $createByMailCheckbox.prop( 'checked' );
+			if ( testResult ) {
+				if ( !checked ) {
+					$('#wpCreateaccount').addClass('mw-field-hidden');	// Confirmation checkbox unchecked, hide create account button
+				} else {
+					$('#wpCreateaccount').removeClass('mw-field-hidden');	// Confirmation checkbox has been checked, show create account button again
 				}
-				$emailLabel.text( originalText );
-			}*/
-			
+				// Creation reason is a password. Ask user to confirm.
+				$('.mw-field-confirmreason').removeClass('mw-field-hidden');
+			} else {
+				// Creation reason is not a password, hide checkbox
+				 $('.mw-field-confirmreason').addClass('mw-field-hidden');
+				 $('#wpCreateaccount').removeClass('mw-field-hidden');	// make sure that create account button is visible
+			}			
 		}
-
-		$createReasonInput.on( 'change', updateForCheckbox );
+		
+		// Two listeners are required here for both scenarios (text and checkbox click)
+		$( '#wpReason' ).on( 'change', updateForCheckbox );
+		$createByMailCheckbox.on( 'change', updateForCheckbox );
 		updateForCheckbox();
 	} );
 
