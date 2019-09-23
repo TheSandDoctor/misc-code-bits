@@ -50,7 +50,7 @@
 		function updateForCheckbox() {
 			//var checked = $createByMailCheckbox.prop( 'checked' );
 			var testResult = re.test( $( "#wpReason" ).val() );
-			if ( re.test( testResult ) )
+			if ( testResult )
 			{
 				//$confirmationCheckbox.show();
 			//	if( $pwds )
