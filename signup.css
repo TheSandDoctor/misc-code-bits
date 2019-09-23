@@ -68,3 +68,7 @@
 	min-height: 75px;
 	text-align: center;
 }
+/* Hide field */
+.mw-field-hidden {
+	display: none !important;
+}
