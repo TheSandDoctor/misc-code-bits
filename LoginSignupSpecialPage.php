@@ -870,7 +870,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'size' => '20',
 					'validation-callback' => function ( $value, $alldata ) {
 						if ( $value && Sanitizer::validateEmail( $value ) && !$alldata['confirmreason']) {
-							return $this->msg( 'invalidemailaddress' );	//TODO: address further. Custom message?
+							return $this->msg( 'createacct-reason-confirm-tip' );
 						}
 						return true;
 					},
@@ -882,6 +882,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'label-message' => "createacct-reason-confirm",
 					'name' => 'wpCreateaccountConfirmReason',
 					'id' => 'wpCreateaccountConfirmReason',
+					'cssclass' => 'mw-field-hidden mw-field-confirmreason',
 					//'hide-if' => [ '===', 'wpCreateaccountMail', '1' ],
 					//'help-message' => $isLoggedIn ? 'createacct-reason-confirm-tip'
 						//: '',
