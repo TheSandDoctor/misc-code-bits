@@ -871,7 +871,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'size' => '20',
 					'validation-callback' => function ( $value, $alldata ) {
 						//global $wgConfirmEmailAsReason;
-						if ( $value && Sanitizer::validateEmail( $value ) ) {
+						if ( $value && Sanitizer::validateEmail( $value ) && !$alldata['confirmreason']) {
 							//call_user_func(
 						//	if(!isset($wgConfirmEmailAsReason)) $wgConfirmEmailAsReason = false;
 						//	else $wgConfirmEmailAsReason = true;
