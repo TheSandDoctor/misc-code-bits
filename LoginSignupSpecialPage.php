@@ -754,7 +754,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 */
 	protected function getFieldDefinitions() {
 		global $wgEmailConfirmToEdit;
-		//global $wgConfirmEmailAsReason;
 
 		$isLoggedIn = $this->getUser()->isLoggedIn();
 		$continuePart = $this->isContinued() ? 'continue-' : '';
@@ -870,19 +869,14 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'id' => 'wpReason',
 					'size' => '20',
 					'validation-callback' => function ( $value, $alldata ) {
-						//global $wgConfirmEmailAsReason;
 						if ( $value && Sanitizer::validateEmail( $value ) && !$alldata['confirmreason']) {
-							//call_user_func(
-						//	if(!isset($wgConfirmEmailAsReason)) $wgConfirmEmailAsReason = false;
-						//	else $wgConfirmEmailAsReason = true;
-							//if(!$wgConfirmEmailAsReason)
 							return $this->msg( 'invalidemailaddress' );	//TODO: address further. Custom message?
 						}
 						return true;
 					},
 					'placeholder-message' => 'createacct-reason-ph',
 				],
-				'confirmreason' => [	///FIX: doesn't show
+				'confirmreason' => [
 					'baseField' => 'reason',
 					'type' => 'check',
 					'label-message' => "createacct-reason-confirm",
