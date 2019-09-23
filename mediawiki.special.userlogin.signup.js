@@ -42,8 +42,10 @@
 			$beforePwds = $( '.mw-row-password' ).first().prev(),
 			re = /\S+@\S+\.\S+/,	// regex for email address verification
 			$pwds;
-		$cconfirmationLabel.text("");
-		$pwds = $confirmationCheckbox.hide();
+		//$cconfirmationLabel.text("");
+		//$pwds = $confirmationCheckbox.parent();
+		//$pwds.hide();
+		$( '#wpCreateaccountConfirmReason' ).parent().hide();
 
 		function updateForCheckbox() {
 			//var checked = $createByMailCheckbox.prop( 'checked' );
@@ -51,13 +53,15 @@
 			if ( re.test( testResult ) )
 			{
 				//$confirmationCheckbox.show();
-				if( $pwds )
-				{
-					$beforePwds.after( $pwds );
-					$pwds = null;
+			//	if( $pwds )
+			//	{
+				$( '#wpCreateaccountConfirmReason' ).parent().show();
+					//$pwds.show();
+					//$beforePwds.after( $pwds );
+					//$pwds = null;
 					$emailLabel.text( requiredText );
-				}
-				$cconfirmationLabel.text( requiredText );
+			//	}
+			//	$cconfirmationLabel.text( requiredText );
 			}
 			
 			/*var checked = $createByMailCheckbox.prop( 'checked' );
