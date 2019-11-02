@@ -873,31 +873,22 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'cssclass' => 'loginText',
 					'id' => 'wpReason',
 					'size' => '20',
+					'placeholder-message' => 'createacct-reason-ph',
 					'validation-callback' => function ( $value, $alldata ) {
-						// If reason is still an email address and checkbox not checked, alert user and ask them to
-						// in most cases, this shouldn't be shown nor encountered by users as it will evaluate false.
-						if ( $value && Sanitizer::validateEmail( $value ) ) {//&& !$alldata['confirmreason'] ) {
-							if ( AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ) == false ) {//$this->getRequest()->getInt( 'reasonConfirm' ) != 1 ) {	// either undefined or 0
+						if ( $value && Sanitizer::validateEmail( $value ) ) {
+							if ( AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ) == false ) {
 								AuthManager::singleton()->setAuthenticationSessionData( 'reason-retry', true );
 								$this->getRequest()->setVal( 'reason', $value); // preserve the reason
 								//$this->getRequest()->setVal( 'reason', AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ));
-								return $this->msg( 'createacct-reason-confirm' );
+								//return $this->msg( 'createacct-reason-confirm' );
+								return $this->msg( 'invalidemailaddress' );	// this doesn't even work
 							} else if ( AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ) == true ) {
 								AuthManager::singleton()->setAuthenticationSessionData( 'reason-retry', false );
-								return true;
+							//	return true;
 							}
 						}
-						return true;
-					},
-					'placeholder-message' => 'createacct-reason-ph',
-				],
-				'confirmreason' => [
-					'baseField' => 'reason',
-					'type' => 'check',
-					'label-message' => "createacct-reason-confirm",
-					'name' => 'wpCreateaccountConfirmReason',
-					'id' => 'wpCreateaccountConfirmReason',
-					'cssclass' => 'mw-field-hidden mw-field-confirmreason',
+						return true;	
+					}
 				],
 				'createaccount' => [
 					// submit button
@@ -1160,7 +1151,8 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		}
 
 		$attr = [];
-		$targetLanguage = Language::factory( $lang );
+		$targetLanguage = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $lang );
 		$attr['lang'] = $attr['hreflang'] = $targetLanguage->getHtmlCode();
 
 		return $this->getLinkRenderer()->makeKnownLink(
