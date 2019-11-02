@@ -225,6 +225,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		// Session data is used for various things in the authentication process, so we must make
 		// sure a session cookie or some equivalent mechanism is set.
 		$session->persist();
+		// Explicitly disable cache to ensure cookie blocks may be set (T152462).
+		// (Technically redundant with sessions persisting from this page.)
+		$this->getOutput()->enableClientCache( false );
 
 		$this->load( $subPage );
 		$this->setHeaders();
@@ -441,7 +444,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		}
 		if ( $extraMessages ) {
 			$extraMessages = Status::wrap( $extraMessages );
-			$out->addWikiTextAsInterface( $extraMessages->getWikiText() );
+			$out->addWikiTextAsInterface(
+				$extraMessages->getWikiText( false, false, $this->getLanguage() )
+			);
 		}
 
 		$out->addHTML( $injected_html );
@@ -869,8 +874,18 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'id' => 'wpReason',
 					'size' => '20',
 					'validation-callback' => function ( $value, $alldata ) {
-						if ( $value && Sanitizer::validateEmail( $value ) && !$alldata['confirmreason']) {
-							return $this->msg( 'createacct-reason-confirm-tip' );
+						// If reason is still an email address and checkbox not checked, alert user and ask them to
+						// in most cases, this shouldn't be shown nor encountered by users as it will evaluate false.
+						if ( $value && Sanitizer::validateEmail( $value ) ) {//&& !$alldata['confirmreason'] ) {
+							if ( AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ) == false ) {//$this->getRequest()->getInt( 'reasonConfirm' ) != 1 ) {	// either undefined or 0
+								AuthManager::singleton()->setAuthenticationSessionData( 'reason-retry', true );
+								$this->getRequest()->setVal( 'reason', $value); // preserve the reason
+								//$this->getRequest()->setVal( 'reason', AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ));
+								return $this->msg( 'createacct-reason-confirm' );
+							} else if ( AuthManager::singleton()->getAuthenticationSessionData( 'reason-retry', false ) == true ) {
+								AuthManager::singleton()->setAuthenticationSessionData( 'reason-retry', false );
+								return true;
+							}
 						}
 						return true;
 					},
@@ -883,9 +898,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'name' => 'wpCreateaccountConfirmReason',
 					'id' => 'wpCreateaccountConfirmReason',
 					'cssclass' => 'mw-field-hidden mw-field-confirmreason',
-					//'hide-if' => [ '===', 'wpCreateaccountMail', '1' ],
-					//'help-message' => $isLoggedIn ? 'createacct-reason-confirm-tip'
-						//: '',
 				],
 				'createaccount' => [
 					// submit button
@@ -992,11 +1004,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			}
 		}
 		if ( !$this->isSignup() && $this->showExtraInformation() ) {
-			$passwordReset = new PasswordReset(
-				$this->getConfig(),
-				AuthManager::singleton(),
-				MediaWikiServices::getInstance()->getPermissionManager()
-			);
+			$passwordReset = MediaWikiServices::getInstance()->getPasswordReset();
 			if ( $passwordReset->isAllowed( $this->getUser() )->isGood() ) {
 				$fieldDefinitions['passwordReset'] = [
 					'type' => 'info',
